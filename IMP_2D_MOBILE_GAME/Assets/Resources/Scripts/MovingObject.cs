@@ -42,13 +42,13 @@ public abstract class MovingObject : MonoBehaviour {
 		//disable boxCollider --> no collision with casted ray
 		boxCollider.enabled = false;
 		//check for collision on blockingLayer between starting position and end
-		hit = Physics2D.Linecast(start, end, blockingLayer);
+		hit = Physics2D.Linecast (start, end, blockingLayer);
 		//reenable boxCollider
 		boxCollider.enabled = true;
 
 
 		//if the layer is free to be moved to
-		if(hit.transform = null){
+		if(hit.transform == null){
 			//moving
 			StartCoroutine (SmoothMovement (end));
 			//return boolean that we moved
