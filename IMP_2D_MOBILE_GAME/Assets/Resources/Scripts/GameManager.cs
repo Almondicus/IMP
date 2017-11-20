@@ -10,6 +10,13 @@ public class GameManager : MonoBehaviour {
     // CREATING THE VARIABLE BOARDSCRIPT OF THE TYPE BOARDMANAGER
     public BoardManager boardScript;
 
+	//CREATING THE VARIABLE PLAYERFOODPOINTS OF THE TYPE INT
+	public int playerFoodPoints = 100;
+
+	//CREATING THE VARIABLE PLAYERSTURN AND INITIALIZE IT TO TRUE
+	//DOES NOT SHOW IN EDITOR; EVEN THOUGH IT'S PUBLIC
+	[HideInInspector] public bool playersTurn = true;
+
     // DEBUG LVL 3 => WHERE ENEMIES FIRST APPEAR
     private int level = 4;
 
@@ -42,4 +49,10 @@ public class GameManager : MonoBehaviour {
         boardScript.SetupScene(level);
     }
 	 
+	public void GameOver(){
+		//DISABLES THE GAMEMANAGER WHEN GAMEOVER
+		enabled = false;
+	}
+
+
 }
