@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+//player inherits from MovingObject
 public class Player : MovingObject {
-
+	//wait if restarting the levl
+	public float restartLevelDelay = 1f;
 	//Damage the player can apply on the wall by chopping
 	public int wallDamage = 1;
 	//Health points per Food and Soda
 	public int pointsPerFood = 10;
 	public int pointsPerSoda = 20;
-
-	public float restartLevelDelay = 1f;
 
 	//Declaring the animator
 	private Animator animator;
@@ -20,55 +20,71 @@ public class Player : MovingObject {
 	//gives it to GameManager during leveltransition
 	private int food;
 
+	void OnAwake(){
+		this.enabled = false;
+	}
 
-
-	// Player has a different Start() than the level
+	// overrides the MovingObject Start() function
 	protected override void Start () {
-		//initialize animator and flames
+		//initialize animator and food
 		animator = GetComponent<Animator> ();
+
 		food = GameManager.instance.playerFoodPoints;
-		//start MovingObject
+		this.enabled = true;
+		//start in MovingObject
 		base.Start();
 	}
 
-
 	//When the player is disabled
 	private void OnDisable(){
-		//give the flamePoints to the GameManager to store them during a levelchange
+		//give the foodPoints to the GameManager to store them during a levelchange
 		GameManager.instance.playerFoodPoints = food;
 	}
 
-	// Update is called once per frame
+
 	void Update () {
-		//ignore the input, if it#s not the players turn
-		if (!GameManager.instance.playersTurn)
-			return;
+		//ignore Input, if it's not the players turn
+		if (!GameManager.instance.playersTurn) return;
 
 		//declare variables horizontal and vertical
 		int horizontal = 0;
 		int vertical = 0;
 
 		//initialize them with the keyboard input
-		horizontal = (int) Input.GetAxisRaw ("Horizontal");
-		vertical = (int)Input.GetAxisRaw ("Vertical");
+		horizontal = (int) (Input.GetAxisRaw ("Horizontal"));
+		vertical = (int)(Input.GetAxisRaw ("Vertical"));
 
 		//if you walk horizontally you cannot move vertically 
 		if (horizontal != 0)
 			vertical = 0;
 		//if you move horizontally or vertically
 		if (horizontal != 0 || vertical != 0)
-			//start AttemptMove and give it Wall as a component
+			//start AttemptMove with variables that store the Input
+			//Wall as component --> the player could attack
 			AttemptMove<Wall> (horizontal, vertical);
 	}
 
+
+
+
 	//override the function from MovingObject
 	protected override void AttemptMove<T>(int xDir, int yDir){
-		//with every move the flame points drop
+		//with every move the food points drop
 		food--;
 		//try to move
 		base.AttemptMove<T> (xDir, yDir);
+
+		//references the result from Lincast in Move
 		RaycastHit2D hit;
-		//as flames are lost --> check if the game is over
+
+		/*
+		//if the player was able to move into an empty space
+		if (Move (xDir, yDir, out hit)) {
+			//call SoundManager
+		}
+		*/
+
+		//as food is lost --> check if the game is over
 		CheckIfGameOver ();
 		//the players turn is over
 		GameManager.instance.playersTurn = false;
@@ -112,13 +128,12 @@ public class Player : MovingObject {
 
 	private void Restart(){
 		//On restart load the level again (automatically new level)
-		SceneManager.LoadScene ("Main");
-
+		SceneManager.LoadScene (SceneManager.GetActiveScene().name);
 	}
 
 
 	//when enemy attacks
-	public void LoseFlames(int loss){
+	public void LoseFood(int loss){
 		//start the fitting animation
 		animator.SetTrigger ("playerHit");
 		//lose flames
@@ -131,8 +146,9 @@ public class Player : MovingObject {
 	private void CheckIfGameOver(){
 		//if flames is 0
 		//call the GameOver function of the GameManager
-		if (food <= 0)
+		if (food <= 0) {
 			GameManager.instance.GameOver ();
+		}
 	}
 		
 }

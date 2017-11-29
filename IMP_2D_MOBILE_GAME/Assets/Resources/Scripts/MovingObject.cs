@@ -9,7 +9,7 @@ public abstract class MovingObject : MonoBehaviour {
 
 	//time the object needs in seconds
 	public float moveTime = 0.1f;
-	//checks if the object can move here
+	//checks if the object can move to the layer
 	public LayerMask blockingLayer;
 
 	private BoxCollider2D boxCollider;
@@ -32,7 +32,7 @@ public abstract class MovingObject : MonoBehaviour {
 
 
 	//Move() checks if we are able to move to the aspired space and returns a bool
-	//if we are able to move SmoothMovement() is started
+	//if we are able to --> move SmoothMovement() is started
 	protected bool Move(int xDir, int yDir, out RaycastHit2D hit){
 		//get the current position
 		//Vector2 --> no movement in z
@@ -41,7 +41,7 @@ public abstract class MovingObject : MonoBehaviour {
 		Vector2 end = start + new Vector2 (xDir, yDir);
 		//disable boxCollider --> no collision with casted ray
 		boxCollider.enabled = false;
-		//check for collision on blockingLayer between starting position and end
+		//check for collision on blockingLayer between starting position and ending position
 		hit = Physics2D.Linecast (start, end, blockingLayer);
 		//reenable boxCollider
 		boxCollider.enabled = true;
@@ -56,6 +56,7 @@ public abstract class MovingObject : MonoBehaviour {
 		}
 		//else return boolean that we could not move
 		return false;
+
 	}
 
 
@@ -69,6 +70,7 @@ public abstract class MovingObject : MonoBehaviour {
 		//canMove = true, if Move() was successful
 		bool canMove = Move (xDir, yDir, out hit);
 
+
 		//out hit --> check IF we hit something and WHAT we hit
 		if (hit.transform == null)
 			//if we didn't hit anything nothing happens
@@ -78,6 +80,7 @@ public abstract class MovingObject : MonoBehaviour {
 		if (!canMove && hitComponent != null)
 			//depending on the object (player, enemy) something happens
 			OnCantMove (hitComponent);
+		
 	}
 
 
