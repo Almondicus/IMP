@@ -10,7 +10,7 @@ public class Enemy : MovingObject {
 	private Animator animator;
 	//players position
 	private Transform target;
-	//ships a move every other turn
+	//skips a move, every other turn
 	private bool skipMove;
 
 

@@ -24,7 +24,7 @@ public class Player : MovingObject {
 	protected override void Start () {
 		//initialize animator and food
 		animator = GetComponent<Animator> ();
-
+		//set the food points to what is saved in the GameManager
 		food = GameManager.Instance.playerFoodPoints;
 
 		//start in MovingObject
@@ -72,13 +72,6 @@ public class Player : MovingObject {
 
 		//references the result from Lincast in Move
 		RaycastHit2D hit;
-
-		/*
-		//if the player was able to move into an empty space
-		if (Move (xDir, yDir, out hit)) {
-			//call SoundManager
-		}
-		*/
 
 		//as food is lost --> check if the game is over
 		CheckIfGameOver ();
@@ -143,6 +136,7 @@ public class Player : MovingObject {
 		//if flames is 0
 		//call the GameOver function of the GameManager
 		if (food <= 0) {
+			//call GameOver function in GameManager
 			GameManager.Instance.GameOver ();
 		}
 	}

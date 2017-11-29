@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class MovingObject : MonoBehaviour {
 	
-	//This class is written for Player AND enemy
+	//This class is written for Player AND Enemy
 	 
 
 	//time the object needs in seconds
@@ -12,8 +12,8 @@ public abstract class MovingObject : MonoBehaviour {
 	//checks if the object can move to the layer
 	public LayerMask blockingLayer;
 
+	//references to the object we want to move
 	private BoxCollider2D boxCollider;
-	//reference to the object we want to move
 	private Rigidbody2D rb;
 	//for efficiency in movement
 	private float inverseMoveTime;
@@ -21,7 +21,7 @@ public abstract class MovingObject : MonoBehaviour {
 
 
 	//Start() initializes boxCollider and rb and sets the speed
-	// protected so it can be overwritten
+	//protected so it can be overwritten
 	protected virtual void Start () {
 		boxCollider = GetComponent<BoxCollider2D> ();
 		rb = GetComponent<Rigidbody2D> ();

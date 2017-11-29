@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour {
+	//CREATE THE VARIABLE LEVELSTARTDELAY OF TYPE FLOAT
 	public float levelStartDely = 2f;
 
 	//CREATING THE VARIABLE TURNDELAY OF TYPE FLOAT
@@ -13,7 +14,7 @@ public class GameManager : MonoBehaviour {
 
 
     // DEFINING GAMEMANGER AS SIGLETON => PREVENTING MULTIPLE LAUNCH
-    //public static GameManager instance = null;
+	private static GameManager instance;
 
 
 	//CREATING THE VARIABLE PLAYERSTURN AND INITIALIZE IT TO TRUE
@@ -32,45 +33,32 @@ public class GameManager : MonoBehaviour {
 	//DECLARE A VARIABLE CALLED ENEMIESMOVING OF TYPE BOOLEAN
 	private bool enemiesMoving;
 
-	private static GameManager instance;
-
+	//PREVENTING MULTIPLE GAMEMANAGER OBJECTS
 	public static GameManager Instance{
+		//get Instance of GameManager
 		get{
+			//if instance is empty
 			if (instance == null) {
+				//set it to existing GameManager GameObject 
 				instance = GameObject.FindObjectOfType<GameManager> ();
 			}
+			//return this instance
 			return instance;
 		}
 	}
 
 	// Use this for initialization
 	protected virtual void Awake(){
-		/*
-        // CHECK IF INSTANCE == NULL => ASSIGNE TO THIS
-        if (instance == null) {
-            instance = this;
-			// DON'T DESTROY ON LOAD
-			// WHEN LOADING A NEW SCENEN, NORMALLY ALL GAMEOBJECTS INSIDE THE HIRARCHY ARE DESTROYED
-			// THE GAMEMANAGER IS USED TO KEEP TRACK OF THE SCORE AND SO ON BETWEEN THE SCENES
-			// => DONTDESTROYONLOAD PRESERVES IT FROM BEING DESTROYED
-			DontDestroyOnLoad(this.gameObject);
-        }
-        // DESTROY INSTANCE => PREVENTING MULTIPLE GAMEMANAGER OBJECTS
-        else if(this != instance){
-            Destroy(this.gameObject);
-			*/
 
+			//if there is an instance AND the instance is not this object
 			if(instance != null && instance != this){
+				//destroy this object
 				Destroy(this.gameObject);
+				//and stop the code
 				return;
 			}
+			//else set intance to this
 			instance = this;
-        
-
-
-
-	
-      
 
 
 		//CREATE A LIST WITH ENEMIES
@@ -79,11 +67,15 @@ public class GameManager : MonoBehaviour {
         // COMPONENT REFERENCE TO BOARDMANAGER SCRIPT
         boardScript = GetComponent<BoardManager>();
 
+		//INITIALIZE THE GAME
         InitGame();
 	}
 
+	//if the level was loaded
 	void OnLevelWasLoaded(int index){
+		//set up the level
 		level++;
+		//initialize the game
 		InitGame ();
 	}
 
@@ -97,23 +89,22 @@ public class GameManager : MonoBehaviour {
 		
 
 	void Update(){
-		//start MoveEnemies, if it's their turn and they are not allready moving
+		//if it is the enemies turn OR the enemies are allready moving --> return
+		//else start moving the enemies
 		if (playersTurn || enemiesMoving)
 			return;
-
 		StartCoroutine (MoveEnemies ());
 	}
 
 
 	public void AddEnemyToList(Enemy script){
-		//add enemies to the list and give them to the GameManager to handle them
+		//add enemies to the list and give the list to the GameManager to handle them
 		enemies.Add (script);
 	}
 
 
 
 	public void GameOver(){
-		
 		//DISABLES THE GAMEMANAGER WHEN GAMEOVER
 		enabled = false;
 	}
