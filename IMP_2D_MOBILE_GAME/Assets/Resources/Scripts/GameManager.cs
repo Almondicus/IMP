@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour {
 
 
     // DEFINING GAMEMANGER AS SIGLETON => PREVENTING MULTIPLE LAUNCH
-    public static GameManager instance = null;
+    //public static GameManager instance = null;
 
 
 	//CREATING THE VARIABLE PLAYERSTURN AND INITIALIZE IT TO TRUE
@@ -32,10 +32,20 @@ public class GameManager : MonoBehaviour {
 	//DECLARE A VARIABLE CALLED ENEMIESMOVING OF TYPE BOOLEAN
 	private bool enemiesMoving;
 
+	private static GameManager instance;
+
+	public static GameManager Instance{
+		get{
+			if (instance == null) {
+				instance = GameObject.FindObjectOfType<GameManager> ();
+			}
+			return instance;
+		}
+	}
 
 	// Use this for initialization
-	void Awake(){
-
+	protected virtual void Awake(){
+		/*
         // CHECK IF INSTANCE == NULL => ASSIGNE TO THIS
         if (instance == null) {
             instance = this;
@@ -43,12 +53,20 @@ public class GameManager : MonoBehaviour {
 			// WHEN LOADING A NEW SCENEN, NORMALLY ALL GAMEOBJECTS INSIDE THE HIRARCHY ARE DESTROYED
 			// THE GAMEMANAGER IS USED TO KEEP TRACK OF THE SCORE AND SO ON BETWEEN THE SCENES
 			// => DONTDESTROYONLOAD PRESERVES IT FROM BEING DESTROYED
-			DontDestroyOnLoad(this);
+			DontDestroyOnLoad(this.gameObject);
         }
         // DESTROY INSTANCE => PREVENTING MULTIPLE GAMEMANAGER OBJECTS
         else if(this != instance){
             Destroy(this.gameObject);
-        }
+			*/
+
+			if(instance != null && instance != this){
+				Destroy(this.gameObject);
+				return;
+			}
+			instance = this;
+        
+
 
 
 	

@@ -20,17 +20,13 @@ public class Player : MovingObject {
 	//gives it to GameManager during leveltransition
 	private int food;
 
-	void OnAwake(){
-		this.enabled = false;
-	}
-
 	// overrides the MovingObject Start() function
 	protected override void Start () {
 		//initialize animator and food
 		animator = GetComponent<Animator> ();
 
-		food = GameManager.instance.playerFoodPoints;
-		this.enabled = true;
+		food = GameManager.Instance.playerFoodPoints;
+
 		//start in MovingObject
 		base.Start();
 	}
@@ -38,13 +34,13 @@ public class Player : MovingObject {
 	//When the player is disabled
 	private void OnDisable(){
 		//give the foodPoints to the GameManager to store them during a levelchange
-		GameManager.instance.playerFoodPoints = food;
+		GameManager.Instance.playerFoodPoints = food;
 	}
 
 
 	void Update () {
 		//ignore Input, if it's not the players turn
-		if (!GameManager.instance.playersTurn) return;
+		if (!GameManager.Instance.playersTurn) return;
 
 		//declare variables horizontal and vertical
 		int horizontal = 0;
@@ -87,7 +83,7 @@ public class Player : MovingObject {
 		//as food is lost --> check if the game is over
 		CheckIfGameOver ();
 		//the players turn is over
-		GameManager.instance.playersTurn = false;
+		GameManager.Instance.playersTurn = false;
 
 	}
 
@@ -147,7 +143,7 @@ public class Player : MovingObject {
 		//if flames is 0
 		//call the GameOver function of the GameManager
 		if (food <= 0) {
-			GameManager.instance.GameOver ();
+			GameManager.Instance.GameOver ();
 		}
 	}
 		

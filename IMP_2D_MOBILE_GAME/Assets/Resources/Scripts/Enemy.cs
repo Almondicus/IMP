@@ -18,7 +18,7 @@ public class Enemy : MovingObject {
 	// override Start() from base
 	protected override void Start () {
 		//add selfe to list in GameManager
-		GameManager.instance.AddEnemyToList(this);
+		GameManager.Instance.AddEnemyToList(this);
 		//initialize the animator
 		animator = GetComponent<Animator> ();
 		//find the position of the player

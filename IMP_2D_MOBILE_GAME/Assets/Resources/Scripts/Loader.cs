@@ -12,7 +12,7 @@ public class Loader : MonoBehaviour {
 
         // CHECK THE GAMEMANAGER STATIC VARIABLE FROM THE GAMEMANAGER SCRIPT
         // IF == NULL => INSTANTIATE A NEW GAMEMANAGER => INSTANTIATE(GAMEMANAGER)
-        if (GameManager.instance == null){
+        if (GameManager.Instance == null){
             Instantiate(gameManager);
         }
 	}
