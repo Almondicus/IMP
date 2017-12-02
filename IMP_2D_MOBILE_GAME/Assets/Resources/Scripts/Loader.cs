@@ -9,13 +9,14 @@ public class Loader : MonoBehaviour {
     public GameObject gameManager;
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 
         // CHECK THE GAMEMANAGER STATIC VARIABLE FROM THE GAMEMANAGER SCRIPT
         // IF == NULL => INSTANTIATE A NEW GAMEMANAGER => INSTANTIATE(GAMEMANAGER)
         if (GameManager.instance == null){
             Instantiate(gameManager);
         }
+
 	}
 	 
 }

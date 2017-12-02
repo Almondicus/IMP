@@ -23,6 +23,10 @@ public class Enemy : MovingObject{
     // => OVERRIDE THE START FUNCTION OF BASE CLASS MOVINGOBJECT
 	protected override void Start () {
 
+        // HAVE THE ENEMY ADD ISTSELF TO THE ENEMYLIST IN GAMEMANAGER
+        // => GAMEMANAGER CAN NOW CALL THE PUBLIC FUNCTIONS OF ENEMY
+        GameManager.instance.AddEnemyToList(this);
+
         // GET AND STORE COMPONENT REFERENCE 
         animator = GetComponent<Animator>();
 
@@ -96,6 +100,9 @@ public class Enemy : MovingObject{
         // DECLARE A VARIABLE HITPLAYER OF THE TYPE PLAYER 
         // => SET EQUAL THE COMPONENT PASSED IN AND CAST TO PLAYER
         Player hitPlayer = component as Player;
+
+        // SET THE ENEMYATTACK TRIGGER IN THE ENEMY ANIMATOR CONTROLLER
+        animator.SetTrigger("enemyAttack");
 
         // CALL LOSEFOOD FUNCTION => PLAYERDAMAGE AS POINTS LOSS
         hitPlayer.LoseFood(playerDamage);

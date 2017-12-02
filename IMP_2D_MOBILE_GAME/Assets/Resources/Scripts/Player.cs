@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Player : MovingObject {
 
@@ -15,6 +16,9 @@ public class Player : MovingObject {
 
     // 
     public float restartLevelDelay = 1f;
+
+    // FOOD TEXT
+    public Text foodText;
     
     /* PRIVATE VARIABLES */
     // ANIMATOR 
@@ -24,8 +28,8 @@ public class Player : MovingObject {
     // BEFORE PASSING IT BACK TO THE GAME MANAGER WHEN CHANGING LEVELS
     private int food;
 
-	// PROTECTED OVERRIDE => BECAUSE OF DIFFERENT IMPLEMENTATION IN THE PLAYER CLASS
-	protected override void Start () {
+    // PROTECTED OVERRIDE => BECAUSE OF DIFFERENT IMPLEMENTATION IN THE PLAYER CLASS
+    protected override void Start(){
 
         // REFERENCE TO ANIMATOR COMPONENT
         animator = GetComponent<Animator>();
@@ -33,17 +37,23 @@ public class Player : MovingObject {
         // SET FOOD TO THE VALUE OF PLAYER FOOD POINTS WHICH IS STORED IN THE GAME MANAGER
         food = GameManager.instance.playerFoodPoints;
 
+        // SET FOOD TEXT TO CURRENT FOOD POINTS
+        foodText.text = "Food: " + food;
+
         // CALL START FUNCTION OF THE BASE CLASS MOVINGOBJECT
         base.Start();
 	}
 
     // FUNCTION 
     private void OnDisable(){
+
+        // STORE THE VALUE OF FOOD IN THE GAMEMANAGER AS LEVEL CHANGES
         GameManager.instance.playerFoodPoints = food;
+
     }
 
     // FUNCTION 
-    void update() {
+    void Update() {
 
         // CHECK IF IT CURRENTLY IS THE PLAYERS TURN
         // => IF NOT: RETURN AND SKIP THE FOLLOWING CODE
@@ -56,8 +66,8 @@ public class Player : MovingObject {
         int vertical = 0;
 
         // GET AXIS MOVEMENT => CAST TO INT AND STORE AS HORIZONTAL/VERTICAL
-        horizontal = (int)Input.GetAxisRaw("Horizontal");
-        vertical = (int)Input.GetAxisRaw("Vertical");
+        horizontal = (int)(Input.GetAxisRaw("Horizontal"));
+        vertical = (int)(Input.GetAxisRaw("Vertical"));
 
         // CHECK IF HORIZONTAL MOVEMENT => SET VERTICAL TO 0 TO PREVENT DIAGONAL MOVEMENT
         if (horizontal != 0) {
@@ -78,6 +88,9 @@ public class Player : MovingObject {
         
         // REDUCE FOOD POINTS -1
         food--;
+
+        // SET FOOD TEXT TO CURRENT FOOD AMOUNT
+        foodText.text = "Food: " + food;
 
         // CALL BASE FUNCTION AND PASSING XDIR/YDIR AS PARAMETERS
         base.AttemptMove<T>(xDir, yDir);
@@ -105,11 +118,13 @@ public class Player : MovingObject {
         // IF FOOD
         else if(other.tag == "Food"){
             food += pointsPerFood;
+            foodText.text = "+" + pointsPerFood + " Food: " + food;
             other.gameObject.SetActive(false);
         }
         // IF POTION
         else if(other.tag == "Soda"){
             food += pointsPerSoda;
+            foodText.text = "+" + pointsPerSoda + " Food: " + food;
             other.gameObject.SetActive(false);
         }
          
@@ -145,6 +160,9 @@ public class Player : MovingObject {
         // REDUCE FOOD BY LOSS
         food -= loss;
 
+        // SHOW FOOD LOSS
+        foodText.text = "-" + loss + " Food: " + food;
+
         // CALL CHECKIFGAMEOVER
         CheckIfGameOver();
 
@@ -152,10 +170,12 @@ public class Player : MovingObject {
 
     // FUNCTION TO CHECK IF GAME IS OVER
     private void CheckIfGameOver(){
-        if(food <= 0){
+
+        if (food <= 0){
             // CALL THE GAME OVER FUNCTION OF THE GAME MANAGER
             GameManager.instance.GameOver();
         }
+
     }
  
 }

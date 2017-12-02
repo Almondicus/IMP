@@ -16,7 +16,8 @@ public abstract class MovingObject : MonoBehaviour {
      
     // PROTECTED VIRTUAL CLASS => CAN BE OVEWRITTEN BY INHERITING CLASSES
     // => IN CASE INHERITING CLASS NEEDS DIFFERENT IMPLEMENTATION OF START()
-	protected virtual void Start () {
+	protected virtual void Start() {
+
         boxCollider = GetComponent<BoxCollider2D>();
         rb2D = GetComponent<Rigidbody2D>();
 
