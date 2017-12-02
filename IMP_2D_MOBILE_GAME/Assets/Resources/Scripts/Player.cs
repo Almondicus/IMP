@@ -114,8 +114,7 @@ public class Player : MovingObject {
         }
          
     }
-
-
+     
     // IMPLEMENTATION OF ONCANTMOVE FOR THE PLAYER (OVERWRITES THE INHERITED ABSTRACT FUNCTION)
     // FOR PLAYER WALKING INTO A WALL
     protected override void OnCantMove<T>(T component){
@@ -138,7 +137,7 @@ public class Player : MovingObject {
     }
 
     // FUNCTION TO LOSE FOOD WHEN HIT
-    private void loseFood(int loss){
+    public void LoseFood(int loss){
 
         // SET TRIGGER FOR PLAYER HIT ANIMATION
         animator.SetTrigger("playerHit");
