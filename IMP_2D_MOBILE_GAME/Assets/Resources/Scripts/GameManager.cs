@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour {
     // BOARDSCRIPT OF THE TYPE BOARDMANAGER
     private BoardManager boardScript;
     
-    // DEBUG LVL 4 => WHERE ENEMIES FIRST APPEAR
+    // INITIAL GAME LEVEL
     private int level = 1;
 
     // LIST OF ENEMIES TO KEEP TRACK OF THE ENEMIES AND SEND THEM THEIR ORDERS TO MOVE
@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour {
     }
 
     // IS CALLED EVERY TIME A SCENE IS LOADED 
-    private void OnLevelWasLoaded(int level){
+    private void OnLevelWasLoaded(int index){
 
         // INCREASE LEVEL BY 1
         level++;
