@@ -36,7 +36,7 @@ public class Player : MovingObject {
     // STORES THE PLAYERS SCORE DURING THE LEVEL
     // BEFORE PASSING IT BACK TO THE GAME MANAGER WHEN CHANGING LEVELS
     private int food;
-
+ 
     // PROTECTED OVERRIDE => BECAUSE OF DIFFERENT IMPLEMENTATION IN THE PLAYER CLASS
     protected override void Start(){
 
@@ -73,21 +73,21 @@ public class Player : MovingObject {
         // STORE MOVEMENT DIRECTION
         int horizontal = 0;
         int vertical = 0;
-
+ 
         // GET AXIS MOVEMENT => CAST TO INT AND STORE AS HORIZONTAL/VERTICAL
         horizontal = (int)(Input.GetAxisRaw("Horizontal"));
         vertical = (int)(Input.GetAxisRaw("Vertical"));
 
         // CHECK IF HORIZONTAL MOVEMENT => SET VERTICAL TO 0 TO PREVENT DIAGONAL MOVEMENT
-        if (horizontal != 0) {
+        if(horizontal != 0){
             vertical = 0;
         }
-
+  
         // IF NON 0 VALUE FOR HORIZONTAL/VERTICAL
-        if(horizontal != 0 || vertical != 0){
-            // CALL ATTEMPTMOVE => PASSING IN THE GENERIC PARAMETER WALL - PLAYER MAY ENCOUNTER A WALL WHICH HE CAN INTERACT WITH
-            AttemptMove<Wall>(horizontal, vertical);
-        }
+        if (horizontal != 0 || vertical != 0){
+                // CALL ATTEMPTMOVE => PASSING IN THE GENERIC PARAMETER WALL - PLAYER MAY ENCOUNTER A WALL WHICH HE CAN INTERACT WITH
+                AttemptMove<Wall>(horizontal, vertical);
+            }
          
     }
 
