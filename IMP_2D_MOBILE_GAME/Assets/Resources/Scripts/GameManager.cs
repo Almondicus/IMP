@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour {
 
     /* PUBLIC VARIABLES */
     // START DELAY FOR EACH LEVEL
-    float levelStartDelay = 2f;
+    public float levelStartDelay = 2f;
 
     // HOW LONG THE GAMES WAITS BETWEEN TURNS
     public float turnDelay = .1f;
@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour {
     // DOINGSETUP => PREVENT PLAYER FROM MOVING WHILE SETUP
     private bool doingSetup;
 
-
+    /* FUNCTIONS */
     // Use this for initialization
     void Awake(){
 
