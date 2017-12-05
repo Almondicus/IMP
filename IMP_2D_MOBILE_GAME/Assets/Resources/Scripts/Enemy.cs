@@ -9,12 +9,17 @@ public class Enemy : MovingObject{
     // FOOD POINTS SUBTRACTED WHEN THE ENEMY ATTACKS THE PLAYER
     public int playerDamage;
 
+    // AUDIOCLIPS
+    public AudioClip enemyAttack1;
+    public AudioClip enemyAttack2;
+    
+
     /* PRIVATE VARIABLES */
     private Animator animator;
 
     // STORES THE PLAYERS POSITION AND TELLS THE ENEMY WHERE TO MOVE TOWARDS
     private Transform target;
-
+     
     // CAUSES THE ENEMY TO MOVE EVERY OTHER TURN
     private bool skipMove;
 
@@ -101,12 +106,16 @@ public class Enemy : MovingObject{
         // => SET EQUAL THE COMPONENT PASSED IN AND CAST TO PLAYER
         Player hitPlayer = component as Player;
 
+        // CALL LOSEFOOD FUNCTION => PLAYERDAMAGE AS POINTS LOSS
+        hitPlayer.LoseFood(playerDamage);
+
         // SET THE ENEMYATTACK TRIGGER IN THE ENEMY ANIMATOR CONTROLLER
         animator.SetTrigger("enemyAttack");
 
-        // CALL LOSEFOOD FUNCTION => PLAYERDAMAGE AS POINTS LOSS
-        hitPlayer.LoseFood(playerDamage);
-         
+        // PLAY RANDOMIZED ENEMYATTACK SOUND
+        SoundManager.instance.RandomizeSfx(enemyAttack1, enemyAttack2);
+
+
     }
 
 

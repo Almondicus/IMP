@@ -19,7 +19,16 @@ public class Player : MovingObject {
 
     // FOOD TEXT
     public Text foodText;
-    
+
+    // AUDIOCLIPS
+    public AudioClip moveSound1;
+    public AudioClip moveSound2;
+    public AudioClip eatSound1;
+    public AudioClip eatSound2;
+    public AudioClip drinkSound1;
+    public AudioClip drinkSound2;
+    public AudioClip gameOverSound;
+
     /* PRIVATE VARIABLES */
     // ANIMATOR 
     private Animator animator;
@@ -98,6 +107,15 @@ public class Player : MovingObject {
         // REFERENCE THE RESULT OF THE LINECAST 
         RaycastHit2D hit;
 
+        // MOVEMENT SOUND
+        // IF ABLE TO MOVE
+        if(Move(xDir, yDir, out hit)){
+
+            // PLAY RANDOM MOVESOUND
+            SoundManager.instance.RandomizeSfx(moveSound1, moveSound2);
+            
+        }
+
         // CHECK IF GAMEOVER => ANY FOOD POINTS LEFT
         CheckIfGameOver();
 
@@ -118,13 +136,25 @@ public class Player : MovingObject {
         // IF FOOD
         else if(other.tag == "Food"){
             food += pointsPerFood;
+
+            // CHANGE FOODTEXT
             foodText.text = "+" + pointsPerFood + " Food: " + food;
+
+            // PLAY RANDOM EAT SOUND
+            SoundManager.instance.RandomizeSfx(eatSound1, eatSound2);
+
             other.gameObject.SetActive(false);
         }
         // IF POTION
         else if(other.tag == "Soda"){
             food += pointsPerSoda;
+
+            // CHANGE FOODTEXT
             foodText.text = "+" + pointsPerSoda + " Food: " + food;
+
+            // PLAY RANDOM DRINK SOUND
+            SoundManager.instance.RandomizeSfx(drinkSound1, drinkSound2);
+
             other.gameObject.SetActive(false);
         }
          
@@ -172,8 +202,16 @@ public class Player : MovingObject {
     private void CheckIfGameOver(){
 
         if (food <= 0){
+
+            // PLAY GAMEOVER SOUND
+            SoundManager.instance.PlaySingle(gameOverSound);
+
+            // STOP GAME MUSIC
+            SoundManager.instance.musicSource.Stop();
+
             // CALL THE GAME OVER FUNCTION OF THE GAME MANAGER
             GameManager.instance.GameOver();
+
         }
 
     }

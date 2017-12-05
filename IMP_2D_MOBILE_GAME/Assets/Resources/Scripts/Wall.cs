@@ -4,13 +4,17 @@ using UnityEngine;
 
 public class Wall : MonoBehaviour {
 
-    // PUBLIC VARIABLES
+    /* PUBLIC VARIABLES */
     // SPRITE DISPLAYED AFTER PLAYER HIT THE WALL
     public Sprite dmgSprite;
     // HIT POINTS
     public int hp = 4;
 
-    // PRIVATE VARIABLES
+    // AUDIOCLIPS
+    public AudioClip chopSound1;
+    public AudioClip chopSound2;
+
+    /* PRIVATE VARIABLES */
     private SpriteRenderer spriteRenderer;
 
     // AWAKE FUNCTION
@@ -22,6 +26,9 @@ public class Wall : MonoBehaviour {
 	}
 
     public void DamageWall(int loss){
+
+        // PLAY CHOPSOUND
+        SoundManager.instance.RandomizeSfx(chopSound1, chopSound2);
 
         // CHANGE TO DAMAGED SPRITE
         spriteRenderer.sprite = dmgSprite;

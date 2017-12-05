@@ -48,16 +48,13 @@ public class GameManager : MonoBehaviour {
     void Awake(){
 
         // CHECK IF INSTANCE == NULL => ASSIGNE TO THIS
-        if (instance == null)
-        {
+        if (instance == null){
             instance = this;
         }
         // DESTROY INSTANCE => PREVENTING MULTIPLE GAMEMANAGER OBJECTS
-        else if (instance != this){ 
-
+        else if (instance != this){  
             //
-            Destroy(gameObject);
-
+            Destroy(gameObject); 
         }  
 
         // DON'T DESTROY ON LOAD
