@@ -16,6 +16,7 @@ public class Player : MovingObject {
 
     // 
     public float restartLevelDelay = 1f;
+    public float restartGameDelay = 5f;
 
     // FOOD TEXT
     public Text foodText;
@@ -176,10 +177,19 @@ public class Player : MovingObject {
     }
 
     // FUNCTION TO RESTART THE GAME
-    private void Restart(){
-        // LOAD SCENE 0 
-        SceneManager.LoadScene(0);
+    private void Restart(){        
+        // LOAD SCENE 1 
+        SceneManager.LoadScene(1);
     }
+
+    // FUNCTION TO RESTART THE GAME
+    private void MainRestart()
+    {
+        // LOAD SCENE 0 
+        SceneManager.LoadScene(0); 
+        SoundManager.instance.musicSource.Play();
+    }
+
 
     // FUNCTION TO LOSE FOOD WHEN HIT
     public void LoseFood(int loss){
@@ -211,6 +221,10 @@ public class Player : MovingObject {
 
             // CALL THE GAME OVER FUNCTION OF THE GAME MANAGER
             GameManager.instance.GameOver();
+
+            // RESET PLAYER
+            food = 100;
+            Invoke("MainRestart", restartGameDelay);
 
         }
 

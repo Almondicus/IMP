@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
     /* PUBLIC VARIABLES */
     // START DELAY FOR EACH LEVEL
-    public float levelStartDelay = 2f;
+    public float levelStartDelay = 2f; 
 
     // HOW LONG THE GAMES WAITS BETWEEN TURNS
     public float turnDelay = .1f;
@@ -43,9 +44,14 @@ public class GameManager : MonoBehaviour {
     // DOINGSETUP => PREVENT PLAYER FROM MOVING WHILE SETUP
     private bool doingSetup;
 
+    private bool gameOver = false;
+
     /* FUNCTIONS */
     // Use this for initialization
     void Awake(){
+
+        // DEBUG
+        Debug.Log("AWAKE CALLED " + this);
 
         // CHECK IF INSTANCE == NULL => ASSIGNE TO THIS
         if (instance == null){
@@ -65,28 +71,40 @@ public class GameManager : MonoBehaviour {
          
         // COMPONENT REFERENCE TO BOARDMANAGER SCRIPT
         boardScript = GetComponent<BoardManager>();
-        
+
         // SET NEW LIST ENEMIES OF THE TYPE ENEMY
         enemies = new List<Enemy>();
 
         // CALL INITGAME
-        InitGame();        
-
+        InitGame();
+          
     }
 
     // IS CALLED EVERY TIME A SCENE IS LOADED 
     private void OnLevelWasLoaded(int index){
 
+        // DEBUG
+        Debug.Log("OnLevelWasLoaded " + index + " LEVEL " + level);
+        
+        // IF NOT FIRST LEVEL AND CALLED BY GAME SCENE WITH INDEX 1
+        if ((level != 1 && index == 1) || gameOver)
+        { 
+            // CALL INITGAME FUNCTION
+            InitGame();
+
+            gameOver = false;
+        }
+        
+
         // INCREASE LEVEL BY 1
         level++;
 
-        // CALL INITGAME FUNCTION
-        InitGame();
-
+        // DEBUG
+        Debug.Log("OnLevelWasLoaded AFTER INDEX - " + index + " LEVEL " + level);
     }
 
     // FUNCTION FOR INITIALIZING THE GAME
-    void InitGame() {
+    void InitGame(){
 
         // DOING SETUP
         doingSetup = true;
@@ -127,16 +145,21 @@ public class GameManager : MonoBehaviour {
 
     // FUNCTION FOR GAME OVER
     public void GameOver(){
-
+        
         // SET LEVEL TEXT
-        levelText.text = "After " + level + " days, you died.";
+        levelText.text = "You died!\n\nAt the dawn of day\n\n" + level + "\n\nthe cold dead hords arrived...";
 
         // ACTIVATE LEVEL IMAGE
         levelImage.SetActive(true);
 
-        enabled = false;
-    }
+        //enabled = false;
 
+        // RESTART GAME
+        level = 1;
+        gameOver = true; 
+
+    }
+  
     // UPDATE FUNCTION
     void Update(){
 
