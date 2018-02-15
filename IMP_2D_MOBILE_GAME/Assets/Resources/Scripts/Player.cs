@@ -31,6 +31,11 @@ public class Player : MovingObject {
     public AudioClip gameOverSound;
 
     /* PRIVATE VARIABLES */
+    // SWIPE 
+    public Swipe swipeControls;
+    public Transform player;
+    private Vector3 desiredPosition;
+
     // ANIMATOR 
     private Animator animator;
 
@@ -74,8 +79,10 @@ public class Player : MovingObject {
         // STORE MOVEMENT DIRECTION
         int horizontal = 0;
         int vertical = 0;
- 
+        
+        // DEBUG KEYBOARD CONTROL
         // GET AXIS MOVEMENT => CAST TO INT AND STORE AS HORIZONTAL/VERTICAL
+        /*
         horizontal = (int)(Input.GetAxisRaw("Horizontal"));
         vertical = (int)(Input.GetAxisRaw("Vertical"));
 
@@ -86,10 +93,49 @@ public class Player : MovingObject {
   
         // IF NON 0 VALUE FOR HORIZONTAL/VERTICAL
         if (horizontal != 0 || vertical != 0){
-                // CALL ATTEMPTMOVE => PASSING IN THE GENERIC PARAMETER WALL - PLAYER MAY ENCOUNTER A WALL WHICH HE CAN INTERACT WITH
-                AttemptMove<Wall>(horizontal, vertical);
-            }
-         
+            // CALL ATTEMPTMOVE => PASSING IN THE GENERIC PARAMETER WALL - PLAYER MAY ENCOUNTER A WALL WHICH HE CAN INTERACT WITH
+            AttemptMove<Wall>(horizontal, vertical);
+        }
+        */
+
+        // SWIPE MOVEMENT
+        // => GET X/Y PARAMETERS OF THE VECTOR3DINT AND ASSIGNE THEM TO VAR VERTICAL/HORIZONTAL FOR PLAYER MOVEMENT
+        if (swipeControls.SwipeLeft)
+        {
+            desiredPosition += Vector3.left; 
+            horizontal = Vector3Int.left.x; 
+        }
+        if (swipeControls.SwipeRight)
+        {
+            desiredPosition += Vector3.right;
+            horizontal = Vector3Int.right.x;
+        }
+        if (swipeControls.SwipeUp)
+        {
+            desiredPosition += Vector3.up;
+            vertical = Vector3Int.up.y;
+        }
+        if (swipeControls.SwipeDown)
+        {
+            desiredPosition += Vector3.down;
+            vertical = Vector3Int.down.y;
+        }
+
+        // CHECK IF HORIZONTAL MOVEMENT => SET VERTICAL TO 0 TO PREVENT DIAGONAL MOVEMENT
+        if (horizontal != 0)
+        {
+            vertical = 0;
+        }
+
+        // IF NON 0 VALUE FOR HORIZONTAL/VERTICAL
+        if (horizontal != 0 || vertical != 0)
+        {
+            //player.transform.position = Vector3.MoveTowards(player.transform.position, desiredPosition, 3f * Time.deltaTime);
+            // CALL ATTEMPTMOVE => PASSING IN THE GENERIC PARAMETER WALL - PLAYER MAY ENCOUNTER A WALL WHICH HE CAN INTERACT WITH
+            AttemptMove<Wall>(horizontal, vertical);
+        }
+        
+
     }
 
     // FUNCTION TO ATTEMPT A MOVE FOR THE PLAYER
