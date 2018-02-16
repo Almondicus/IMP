@@ -156,6 +156,7 @@ public class BoardManager : MonoBehaviour {
         // INSTANTIATE EXIT TILE
         // ALLWAYS IN THE TOP RIGHT POSITION => COLUMNS - 1, ROWS - 1 (RESPONSIVE TO RESIZE OF THE GAMEBOARD)
         Instantiate(exit, new Vector3(columns - 1, rows - 1, 0F), Quaternion.identity);
+
     }
 
 

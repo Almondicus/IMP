@@ -1,138 +1,224 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
-	//CREATE THE VARIABLE LEVELSTARTDELAY OF TYPE FLOAT
-	public float levelStartDely = 2f;
 
-	//CREATING THE VARIABLE TURNDELAY OF TYPE FLOAT
-	public float turnDelay = .1f;
+    /* PUBLIC VARIABLES */
+    // START DELAY FOR EACH LEVEL
+    public float levelStartDelay = 2f; 
 
-	//CREATING THE VARIABLE PLAYERFOODPOINTS OF THE TYPE INT
-	public int playerFoodPoints = 100;
+    // HOW LONG THE GAMES WAITS BETWEEN TURNS
+    public float turnDelay = .1f;
 
+    // DEFINING GAMEMANGER AS SIGLETON => PREVENTING MULTIPLE LAUNCHS
+    public static GameManager instance = null;
+     
+    // PLAYER FOOD POINTS
+    public int playerFoodPoints = 100;
 
-    // DEFINING GAMEMANGER AS SIGLETON => PREVENTING MULTIPLE LAUNCH
-	private static GameManager instance;
+    // PLAYERS TURN => HIDEININSPECTOR NOT SHOWN IN INSPECTOR
+    [HideInInspector] public bool playersTurn = true;
 
+    /* PRIVATE VARIABLES */
+    // LEVEL TEXT
+    private Text levelText;
 
-	//CREATING THE VARIABLE PLAYERSTURN AND INITIALIZE IT TO TRUE
-	//DOES NOT SHOW IN EDITOR; EVEN THOUGH IT'S PUBLIC
-	[HideInInspector] public bool playersTurn = true;
+    // LEVEL IMAGE
+    private GameObject levelImage;
 
-    // CREATING THE VARIABLE BOARDSCRIPT OF THE TYPE BOARDMANAGER
+    // BOARDSCRIPT OF THE TYPE BOARDMANAGER
     private BoardManager boardScript;
+    
+    // INITIAL GAME LEVEL
+    private int level = 1;
 
-    // DEBUG LVL 3 => WHERE ENEMIES FIRST APPEAR
-    private int level = 4;
+    // LIST OF ENEMIES TO KEEP TRACK OF THE ENEMIES AND SEND THEM THEIR ORDERS TO MOVE
+    private List<Enemy> enemies;
 
-	//CREAE A LIST FOR THE ENEMYS
-	private List<Enemy> enemies;
+    // VOOLEAN TO CHECK IF ENEMIES ARE MOVING
+    private bool enemiesMoving;
 
-	//DECLARE A VARIABLE CALLED ENEMIESMOVING OF TYPE BOOLEAN
-	private bool enemiesMoving;
+    // DOINGSETUP => PREVENT PLAYER FROM MOVING WHILE SETUP
+    private bool doingSetup;
 
-	//PREVENTING MULTIPLE GAMEMANAGER OBJECTS
-	public static GameManager Instance{
-		//get Instance of GameManager
-		get{
-			//if instance is empty
-			if (instance == null) {
-				//set it to existing GameManager GameObject 
-				instance = GameObject.FindObjectOfType<GameManager> ();
-			}
-			//return this instance
-			return instance;
-		}
-	}
+    private bool gameOver = false;
 
-	// Use this for initialization
-	protected virtual void Awake(){
+    /* FUNCTIONS */
+    // Use this for initialization
+    void Awake(){
 
-			//if there is an instance AND the instance is not this object
-			if(instance != null && instance != this){
-				//destroy this object
-				Destroy(this.gameObject);
-				//and stop the code
-				return;
-			}
-			//else set intance to this
-			instance = this;
+        // DEBUG
+        Debug.Log("AWAKE CALLED " + this);
 
+        // CHECK IF INSTANCE == NULL => ASSIGNE TO THIS
+        if (instance == null){
+            instance = this;
+        }
+        // DESTROY INSTANCE => PREVENTING MULTIPLE GAMEMANAGER OBJECTS
+        else if (instance != this){  
+            //
+            Destroy(gameObject); 
+        }  
 
-		//CREATE A LIST WITH ENEMIES
-		enemies = new List<Enemy>();
-
+        // DON'T DESTROY ON LOAD
+        // WHEN LOADING A NEW SCENEN, NORMALLY ALL GAMEOBJECTS INSIDE THE HIRARCHY ARE DESTROYED
+        // THE GAMEMANAGER IS USED TO KEEP TRACK OF THE SCORE AND SO ON BETWEEN THE SCENES
+        // => DONTDESTROYONLOAD PRESERVES IT FROM BEING DESTROYED
+        DontDestroyOnLoad(gameObject);
+         
         // COMPONENT REFERENCE TO BOARDMANAGER SCRIPT
         boardScript = GetComponent<BoardManager>();
 
-		//INITIALIZE THE GAME
+        // SET NEW LIST ENEMIES OF THE TYPE ENEMY
+        enemies = new List<Enemy>();
+
+        // CALL INITGAME
         InitGame();
-	}
+          
+    }
 
-	//if the level was loaded
-	void OnLevelWasLoaded(int index){
-		//set up the level
-		level++;
-		//initialize the game
-		InitGame ();
-	}
+    // IS CALLED EVERY TIME A SCENE IS LOADED 
+    private void OnLevelWasLoaded(int index){
 
+        // DEBUG
+        Debug.Log("OnLevelWasLoaded " + index + " LEVEL " + level);
+        
+        // IF NOT FIRST LEVEL AND CALLED BY GAME SCENE WITH INDEX 1
+        if ((level != 1 && index == 1) || gameOver)
+        { 
+            // CALL INITGAME FUNCTION
+            InitGame();
 
+            gameOver = false;
+        }
+        
+
+        // INCREASE LEVEL BY 1
+        level++;
+
+        // DEBUG
+        Debug.Log("OnLevelWasLoaded AFTER INDEX - " + index + " LEVEL " + level);
+    }
+
+    // FUNCTION FOR INITIALIZING THE GAME
     void InitGame(){
-		//CLEAR THE LIST OF OLD ENEMIES
-		enemies.Clear();
+
+        // DOING SETUP
+        doingSetup = true;
+
+        // GET GAMEOBJECTS BY NAME
+        levelImage = GameObject.Find("LevelImage");
+        levelText = GameObject.Find("LevelText").GetComponent<Text>();
+
+        // SET LEVELTEXT TO DAY + LEVEL NUMBER
+        levelText.text = "Day " + level;
+
+        // ACTIVATE THE LEVELIMAGE
+        levelImage.SetActive(true);
+
+        // WAIT LEVELSTARTDELAY IN SECONDS BEFORE CALLING HIDELEVELIMAGE FUNCTION
+        // => LEVELSTARTDELAY = 2 SECONDS
+        Invoke("HideLevelImage", levelStartDelay);
+
+        // CLEAR LIST OF ENEMIES
+        // => BECAUSE GAMEMANGER WON'T BE RESET BETWEEN LEVELS
+        enemies.Clear();
+        
         // CALL THE SETUPSCENE FUNCTION OF THE BOARDSCRIPT VARIABLE => LEVEL AS ARGUMENT
         boardScript.SetupScene(level);
+
     }
-		
 
-	void Update(){
-		//if it is the enemies turn OR the enemies are allready moving --> return
-		//else start moving the enemies
-		if (playersTurn || enemiesMoving)
-			return;
-		StartCoroutine (MoveEnemies ());
-	}
+    // FUNCTION TO HIDE THE LEVEL IMAGE
+    private void HideLevelImage(){
 
+        // DEACTIVATE LEVELIMAGE 
+        levelImage.SetActive(false);
 
-	public void AddEnemyToList(Enemy script){
-		//add enemies to the list and give the list to the GameManager to handle them
-		enemies.Add (script);
-	}
+        // SET DOINGSETUP TO FALSE
+        doingSetup = false;
 
+    }
 
+    // FUNCTION FOR GAME OVER
+    public void GameOver(){
+        
+        // SET LEVEL TEXT
+        levelText.text = "You died!\n\nAt the dawn of day\n\n" + level + "\n\nthe cold dead hords arrived...";
 
-	public void GameOver(){
-		//DISABLES THE GAMEMANAGER WHEN GAMEOVER
-		enabled = false;
-	}
+        // ACTIVATE LEVEL IMAGE
+        levelImage.SetActive(true);
 
+        //enabled = false;
 
-	//moves the enemies one at a time
-	IEnumerator MoveEnemies(){
-		//set enemiesMoving to true
-		enemiesMoving = true;
-		//wait so everything happens orderly
-		yield return new WaitForSeconds (turnDelay);
+        // RESTART GAME
+        level = 1;
+        gameOver = true; 
 
-		//if there are no enemies
-		if (enemies.Count == 0) {
-			//let the player wait
-			yield return new WaitForSeconds (turnDelay);		
-		}
-		for (int i = 0; i < enemies.Count; i++) {
-			//every enemy is moved
-			enemies [i].MoveEnemy ();
-			//wait after every moved enemy
-			yield return new WaitForSeconds (enemies[i].moveTime);
-		}
-		//set the players Turn to true
-		playersTurn = true;
-		//set the enemiesMoving to false
-		enemiesMoving = false;
+    }
+  
+    // UPDATE FUNCTION
+    void Update(){
 
-	}
+        // IF PLAYERS TURN OR ENEMIES ALREADY MOVING
+        if(playersTurn || enemiesMoving || doingSetup){
 
+            // DON'T EXECUTE FOLLOWING CODE
+            return;
+        }
+
+        // ELSE => START COROUTINE AND MOVE ENEMIES
+        StartCoroutine(MoveEnemies());
+         
+    }
+
+    // FUNCTION TO ADD ENEMIES TO ENEMIESLIST
+    // => TAKES SCRIPT OF THE TYPE ENEMY AS A PARAMETER
+    // => LET ENEMY REGISTER THEMSELF WITH THE GAMEMANAGER, SO THE GAMEMANAGER CAN ISSUE MOVEMENT ORDERS TO THEM
+    public void AddEnemyToList(Enemy script){
+
+        // ADD ENEMY TO THE ENEMIES LIST
+        enemies.Add(script);
+
+    }
+
+    // COROUTINE TO MOVE ENEMIES
+    IEnumerator MoveEnemies(){
+
+        enemiesMoving = true;
+
+        // WAIT AMOUNT OF TURN DELAY
+        yield return new WaitForSeconds(turnDelay);
+
+        // IF ENEMIES LIST IS EMPTY
+        if(enemies.Count == 0){
+            
+            // CAUSE PLAYER TO WAIT - EVEN IF THERE'S NO ENEMY TO WAIT FOR
+            yield return new WaitForSeconds(turnDelay);
+
+        }
+
+        // LOOP THROUGH ENEMIES LIST
+        for(int i = 0; i < enemies.Count; i++){
+
+            // ISSUE EACH ENEMY TO MOVE
+            enemies[i].MoveEnemy();
+
+            // WAIT TILL NEXT CALL => PASSING IN MOVETIME VARIABLE OF ENEMIES
+            yield return new WaitForSeconds(enemies[i].moveTime);
+
+        }
+
+        // PLAYERS TURN
+        playersTurn = true;
+
+        // ENEMIES NOT ALLOWED TO MOVE
+        enemiesMoving = false;
+         
+    }
+	 
 }
+ 
