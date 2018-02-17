@@ -148,7 +148,7 @@ public class GameManager : MonoBehaviour {
         
         // SET LEVEL TEXT
         levelText.text = "You died!\n\nAt the dawn of day\n\n" + level + "\n\nthe cold dead hords arrived...";
-
+		levelText.fontSize = 20;
         // ACTIVATE LEVEL IMAGE
         levelImage.SetActive(true);
 
