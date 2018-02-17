@@ -3,29 +3,45 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Wall : MonoBehaviour {
-	//Wall makes it possible to destroy walls
 
-	//changing sprites for a damaged wall
-	public Sprite dmgSprite;
-	//healthPoints of the wall --> hits you need to destroy it
-	public int hp = 4;
+    /* PUBLIC VARIABLES */
+    // SPRITE DISPLAYED AFTER PLAYER HIT THE WALL
+    public Sprite dmgSprite;
+    // HIT POINTS
+    public int hp = 4;
 
-	private SpriteRenderer spriteRenderer;
+    // AUDIOCLIPS
+    public AudioClip chopSound1;
+    public AudioClip chopSound2;
 
-	//initialisation of the spriteRenderer
-	void Start () {
-		spriteRenderer = GetComponent<SpriteRenderer> ();
+    /* PRIVATE VARIABLES */
+    private SpriteRenderer spriteRenderer;
+
+    // AWAKE FUNCTION
+    void Awake () {
+
+        // GET AND STORE COMPONENT REFERENCE TO OUR SPRITERENDERER
+        spriteRenderer = GetComponent<SpriteRenderer>(); 
+
 	}
 
-	//function to damage a wall
-	public void DamageWall(int loss){
-		//change the sprite
-		spriteRenderer.sprite = dmgSprite;
-		//decrease the healthPoints
-		hp -= loss;
+    public void DamageWall(int loss){
 
-		//deactivate the wall 
-		if (hp < 0)
-			gameObject.SetActive (false);
-	}
+        // PLAY CHOPSOUND
+        SoundManager.instance.RandomizeSfx(chopSound1, chopSound2);
+
+        // CHANGE TO DAMAGED SPRITE
+        spriteRenderer.sprite = dmgSprite;
+
+        // SUBSTRACT LOSS FROM WALLS CURRENT HP TOTAL
+        hp -= loss;
+
+        // CHECK IF WALL HP <= 0
+        if(hp <= 0){
+            // DISABLE WALL GAME OBJECT
+            gameObject.SetActive(false);
+        } 
+
+    }
+	 
 }
